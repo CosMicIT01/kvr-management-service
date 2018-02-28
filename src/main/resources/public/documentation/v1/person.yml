@@ -1,0 +1,228 @@
+---
+person:
+  get:
+    tags:
+      - Admin API
+      - Public API
+    summary: Get array of persons(tenant/landlords)
+    description: |
+      The GET persons as list.
+    responses:
+      200:
+        description: An array of person
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/models/person'
+      400:
+        $ref: 'definitions.yml#/responses/400'
+  post:
+    tags:
+      - Admin API
+    summary: Create a Person
+    description: |
+      Create Person
+    parameters:
+      - $ref: '#/definitions/parameters/requestCreateBody'
+    responses:
+      201:
+        description: new instance of person
+        schema:
+          $ref: '#/definitions/models/person'
+      400:
+        $ref: 'definitions.yml#/responses/400'
+      401:
+        $ref: 'definitions.yml#/responses/401'
+personId:
+  get:
+    tags:
+      - Public API
+      - User API
+    summary: Get single person
+    description: Get single person object with identity.
+    parameters:
+      - $ref: '#/definitions/parameters/id'
+    responses:
+      200:
+        description: '`Organizer` object in JSON'
+        schema:
+          $ref: '#/definitions/models/person'
+      400:
+        $ref: 'definitions.yml#/responses/400'
+      404:
+        $ref: 'definitions.yml#/responses/404'
+  put:
+    tags:
+      - User API
+    summary: Update single person
+    description: Update single person
+    parameters:
+      - $ref: '#/definitions/parameters/id'
+      - $ref: '#/definitions/parameters/requestUpdateBody'
+    responses:
+      202:
+        description: Updated person object
+        schema:
+          $ref: '#/definitions/models/person'
+      400:
+        $ref: 'definitions.yml#/responses/400'
+      404:
+        $ref: 'definitions.yml#/responses/404'
+  patch:
+    tags:
+      - User API
+    summary: Partial update single person
+    description: Partial Update single person
+    parameters:
+      - $ref: '#/definitions/parameters/id'
+      - $ref: '#/definitions/parameters/requestUpdateBody'
+    responses:
+      202:
+        description: Updated person object
+        schema:
+          $ref: '#/definitions/models/person'
+      400:
+        $ref: 'definitions.yml#/responses/400'
+      404:
+        $ref: 'definitions.yml#/responses/404'
+  delete:
+    tags:
+      - Admin API
+    summary: Delete Address
+    description: Delete person object
+    parameters:
+      - $ref: '#/definitions/parameters/id'
+    responses:
+      204:
+        $ref: 'definitions.yml#/responses/204'
+      404:
+        $ref: 'definitions.yml#/responses/404'
+
+#########################
+#      local objects    #
+#########################
+definitions:
+#################
+#   parameters  #
+#################
+  parameters:
+    id:
+      name: id
+      in: path
+      description: identity of person object
+      required: true
+      format: int64
+      type: integer
+    personId:
+      name: personId
+      in: path
+      description: identity of person object
+      required: true
+      format: int64
+      type: integer
+    requestCreateBody:
+      name: body
+      in: body
+      description: raw request body json for post
+      required: true
+      schema:
+        $ref: '#/definitions/models/personCreateRequest'
+    requestUpdateBody:
+      name: body
+      in: body
+      description: raw request body json for post
+      required: true
+      schema:
+        $ref: '#/definitions/models/personUpdateRequest'
+#################
+#     models    #
+#################
+  models:
+    person:
+      type: object
+      required:
+        - id
+        - firstName
+        - lastName
+        - email
+        - birthDate
+        - gender
+        - countryOfOrigin
+      properties:
+        id:
+          type: integer
+          format: int64
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        birthDate:
+          type: string
+        gender:
+          type: string
+          enum:
+            - male
+            - female
+        countryOfOrigin:
+          type: string
+      example:
+        id: 1
+        firstName: Max
+        lastName: Musterman
+        email: max.mustermann@cosmicit.de
+        birthDate: "2000-1-1"
+        gender: male
+        countryOfOrigin: "DE"
+    personCreateRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        birthDate:
+          type: string
+        gender:
+          type: string
+          enum:
+            - male
+            - female
+        countryOfOrigin:
+          type: string
+      example:
+        firstName: Max
+        lastName: Musterman
+        email: max.mustermann@cosmicit.de
+        birthDate: "2000-1-1"
+        gender: male
+        countryOfOrigin: "DE"
+    personUpdateRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        birthDate:
+          type: string
+        gender:
+          type: string
+          enum:
+            - male
+            - female
+        countryOfOrigin:
+          type: string
+      example:
+        firstName: Max
+        lastName: Musterman
+        email: max.mustermann@cosmicit.de
+        birthDate: "2000-1-1"
+        gender: male
+        countryOfOrigin: "DE"
+

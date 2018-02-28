@@ -1,0 +1,39 @@
+swagger: 2.0
+info:
+  version: v1
+  title: Registration Management Service API
+  description: |
+     Registration Management Service
+
+  contact:
+    name: COSMIC IT GmbH
+    email: info@cosmicit.de
+schemes:
+  - http
+  - https
+tags:
+  - name: Public API
+    description: API which can be accessed publicly
+  - name: User API
+    description: API with Customer Token in Future
+  - name: Admin API
+    description: API with for admin user
+  - name: customer
+    description: Data access on `Customer (Future)`
+produces:
+  - application/json
+consumers:
+  - application/json
+paths:
+  /user:
+    $ref: 'v1/user.yml#/user'
+  /user/{id}:
+    $ref: 'v1/user.yml#/userId'
+  /person:
+    $ref: 'v1/person.yml#/person'
+  /person/{id}:
+    $ref: 'v1/person.yml#/personId'
+  /address:
+    $ref: 'v1/address.yml#/address'
+  /address/{id}:
+    $ref: 'v1/address.yml#/addressId'
