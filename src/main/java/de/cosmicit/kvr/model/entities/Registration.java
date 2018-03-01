@@ -1,17 +1,17 @@
 package de.cosmicit.kvr.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import de.cosmicit.kvr.model.deserializers.CollectionDeserializer;
+import de.cosmicit.kvr.model.deserializers.ReferenceDeserializer;
 import de.cosmicit.kvr.model.deserializers.UTCDateTimeDeserializer;
-import de.cosmicit.kvr.model.serializers.CollectionSerializer;
 import de.cosmicit.kvr.model.serializers.UTCDateTimeSerializer;
 import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -21,32 +21,65 @@ public class Registration {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @Column(name = "registration_id", unique = true, nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
 
-    @Column(name = "last_registration_date")
+    @Column(name = "registrationdate")
     @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime",
             parameters = {@org.hibernate.annotations.Parameter(name = "databaseZone", value = "UTC"), @org.hibernate.annotations.Parameter(name = "javaZone", value = "jvm")})
     @JsonDeserialize(using = UTCDateTimeDeserializer.class)
     @JsonSerialize(using = UTCDateTimeSerializer.class)
-    private LocalDate lastRegistrationDate;
+    private DateTime registrationDate;
 
-    @Column(name = "created_by")
+    @Column(name = "lastregistrationdate")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime",
+            parameters = {@org.hibernate.annotations.Parameter(name = "databaseZone", value = "UTC"), @org.hibernate.annotations.Parameter(name = "javaZone", value = "jvm")})
+    @JsonDeserialize(using = UTCDateTimeDeserializer.class)
+    @JsonSerialize(using = UTCDateTimeSerializer.class)
+    private DateTime lastRegistrationDate;
+
+    @Column(name = "createdby")
     private String createdBy;
 
-    @Column(name = "modified_by")
+    @Column(name = "modifiedby")
     private String modifiedBy;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
-    private Address address;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currentaddress")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonDeserialize(using = ReferenceDeserializer.class)
+    private Address currentAddress;
 
-    @Column(name = "registered_person")
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "registration")
-    @JsonSerialize(using = CollectionSerializer.class)
-    @JsonDeserialize(using = CollectionDeserializer.class)
-    private Set<Person> registeredPersons = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "previousaddress")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonDeserialize(using = ReferenceDeserializer.class)
+    private Address previousAddress;
+
+
+    @Column(name = "createddate")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime",
+            parameters = {@org.hibernate.annotations.Parameter(name = "databaseZone", value = "UTC"), @org.hibernate.annotations.Parameter(name = "javaZone", value = "jvm")})
+    @JsonDeserialize(using = UTCDateTimeDeserializer.class)
+    @JsonSerialize(using = UTCDateTimeSerializer.class)
+    private DateTime createdDate;
+
+
+    @Column(name = "modifieddate")
+    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime",
+            parameters = {@org.hibernate.annotations.Parameter(name = "databaseZone", value = "UTC"), @org.hibernate.annotations.Parameter(name = "javaZone", value = "jvm")})
+    @JsonDeserialize(using = UTCDateTimeDeserializer.class)
+    @JsonSerialize(using = UTCDateTimeSerializer.class)
+    private DateTime modifiedDate;
+
+//    @Column(name = "registered_person")
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "registration")
+//    @JsonSerialize(using = CollectionSerializer.class)
+//    @JsonDeserialize(using = CollectionDeserializer.class)
+//    private Set<Person> registeredPersons = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -56,11 +89,11 @@ public class Registration {
         this.id = id;
     }
 
-    public LocalDate getLastRegistrationDate() {
+    public DateTime getLastRegistrationDate() {
         return lastRegistrationDate;
     }
 
-    public void setLastRegistrationDate(LocalDate lastRegistrationDate) {
+    public void setLastRegistrationDate(DateTime lastRegistrationDate) {
         this.lastRegistrationDate = lastRegistrationDate;
     }
 
@@ -80,30 +113,63 @@ public class Registration {
         this.modifiedBy = modifiedBy;
     }
 
-    public Address getAddress() {
-        return address;
+    public Address getCurrentAddress() {
+        return currentAddress;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setCurrentAddress(Address currentAddress) {
+        this.currentAddress = currentAddress;
     }
 
-    public Set<Person> getRegisteredPersons() {
-        return registeredPersons;
+    public Address getPreviousAddress() {
+        return previousAddress;
     }
 
-    public void setRegisteredPersons(Set<Person> registeredPersons) {
-        if (!this.registeredPersons.isEmpty()) {
-            this.registeredPersons.forEach((Person registeredUser) -> registeredUser.setRegistration(null));
-            this.registeredPersons.clear();
-        }
-        registeredPersons.forEach((Person registeredUser) -> registeredUser.setRegistration(this));
-        this.registeredPersons.addAll(registeredPersons);
+    public void setPreviousAddress(Address previousAddress) {
+        this.previousAddress = previousAddress;
     }
 
-    public void addRegisteredPerson(Person registeredPerson) {
-        if (!this.registeredPersons.contains(registeredPerson)) {
-            this.registeredPersons.add(registeredPerson);
-        }
+    //    public Set<Person> getRegisteredPersons() {
+//        return registeredPersons;
+//    }
+//
+//    public void setRegisteredPersons(Set<Person> registeredPersons) {
+//        if (!this.registeredPersons.isEmpty()) {
+//            this.registeredPersons.forEach((Person registeredUser) -> registeredUser.setRegistration(null));
+//            this.registeredPersons.clear();
+//        }
+//        registeredPersons.forEach((Person registeredUser) -> registeredUser.setRegistration(this));
+//        this.registeredPersons.addAll(registeredPersons);
+//    }
+//
+//    public void addRegisteredPerson(Person registeredPerson) {
+//        if (!this.registeredPersons.contains(registeredPerson)) {
+//            this.registeredPersons.add(registeredPerson);
+//        }
+//    }
+
+
+    public DateTime getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(DateTime registrationDate) {
+        this.registrationDate = registrationDate;
+    }
+
+    public DateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(DateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public DateTime getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(DateTime modifiedDate) {
+        this.modifiedDate = modifiedDate;
     }
 }

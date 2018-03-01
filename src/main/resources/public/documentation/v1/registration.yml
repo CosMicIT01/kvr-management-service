@@ -1,52 +1,51 @@
 ---
-address:
+registration:
   get:
     tags:
       - Admin API
-      - Public API
-    summary: Get array of addresses
+    summary: Get array of registration
     description: |
-      The GET addresss as list.
+      The GET registration as list.
     responses:
       200:
-        description: An array of address
+        description: An array of registration
         schema:
           type: array
           items:
-            $ref: '#/definitions/models/address'
+            $ref: '#/definitions/models/registration'
       400:
         $ref: 'definitions.yml#/responses/400'
   post:
     tags:
       - Admin API
-    summary: Create a Address
+    summary: Create a Registration
     description: |
-      Create Address
+      Create Registration
     parameters:
       - $ref: '#/definitions/parameters/requestCreateBody'
     responses:
       201:
-        description: new instance of address
+        description: new instance of registration
         schema:
-          $ref: '#/definitions/models/address'
+          $ref: '#/definitions/models/registration'
       400:
         $ref: 'definitions.yml#/responses/400'
       401:
         $ref: 'definitions.yml#/responses/401'
-addressId:
+registrationId:
   get:
     tags:
       - Public API
       - User API
-    summary: Get single address
-    description: Get single address object with identity.
+    summary: Get single registration
+    description: Get single registration object with identity.
     parameters:
       - $ref: '#/definitions/parameters/id'
     responses:
       200:
         description: '`Organizer` object in JSON'
         schema:
-          $ref: '#/definitions/models/address'
+          $ref: '#/definitions/models/registration'
       400:
         $ref: 'definitions.yml#/responses/400'
       404:
@@ -54,16 +53,16 @@ addressId:
   put:
     tags:
       - User API
-    summary: Update single address
-    description: Update single address
+    summary: Update single registration
+    description: Update single registration
     parameters:
       - $ref: '#/definitions/parameters/id'
       - $ref: '#/definitions/parameters/requestUpdateBody'
     responses:
       202:
-        description: Updated address object
+        description: Updated registration object
         schema:
-          $ref: '#/definitions/models/address'
+          $ref: '#/definitions/models/registration'
       400:
         $ref: 'definitions.yml#/responses/400'
       404:
@@ -71,16 +70,16 @@ addressId:
   patch:
     tags:
       - User API
-    summary: Partial update single address
-    description: Partial Update single address
+    summary: Partial update single registration
+    description: Partial Update single registration
     parameters:
       - $ref: '#/definitions/parameters/id'
       - $ref: '#/definitions/parameters/requestUpdateBody'
     responses:
       202:
-        description: Updated address object
+        description: Updated registration object
         schema:
-          $ref: '#/definitions/models/address'
+          $ref: '#/definitions/models/registration'
       400:
         $ref: 'definitions.yml#/responses/400'
       404:
@@ -88,8 +87,8 @@ addressId:
   delete:
     tags:
       - Admin API
-    summary: Delete Address
-    description: Delete address object
+    summary: Delete Registration
+    description: Delete registration object
     parameters:
       - $ref: '#/definitions/parameters/id'
     responses:
@@ -109,14 +108,14 @@ definitions:
     id:
       name: id
       in: path
-      description: identity of address object
+      description: identity of registration object
       required: true
       format: int64
       type: integer
-    addressId:
-      name: addressId
+    registrationId:
+      name: registrationId
       in: path
-      description: identity of address object
+      description: identity of registration object
       required: true
       format: int64
       type: integer
@@ -126,104 +125,114 @@ definitions:
       description: raw request body json for post
       required: true
       schema:
-        $ref: '#/definitions/models/addressCreateRequest'
+        $ref: '#/definitions/models/registrationCreateRequest'
     requestUpdateBody:
       name: body
       in: body
       description: raw request body json for post
       required: true
       schema:
-        $ref: '#/definitions/models/addressUpdateRequest'
+        $ref: '#/definitions/models/registrationUpdateRequest'
 #################
 #     models    #
 #################
   models:
-    address:
+    registration:
       type: object
       required:
         - id
-        - street
-        - houseNumber
-        - zip
-        - city
-        - state
-        - country
-        - countryCode
+        - registrationDate
+        - lastRegistrationDate
+        - createdBy
+        - modifiedBy
+        - currentAddress
+        - previousAddress
+        - createdDate
+        - modifiedDate
       properties:
         id:
           type: integer
           format: int64
-        street:
+        registrationDate:
           type: string
-        houseNumber:
+        lastRegistrationDate:
           type: string
-        zip:
+        createdBy:
           type: string
-        city:
+        modifiedBy:
           type: string
-        state:
+        currentAddress:
           type: string
-        country:
+        previousAddress:
           type: string
-        countryCode:
+        createdDate:
+          type: string
+        modifiedDate:
           type: string
       example:
         id: 1
-        street: maxmillian str
-        houseNumber: 54
-        zip: 81541
-        city: "Munich"
-        state: bayern
-        country: "DE"
-        countryCode: "DE"
-    addressCreateRequest:
+        registrationDate: "2000-10-10"
+        lastRegistrationDate: "2000-1-12"
+        createdBy: Max
+        modifiedBy: Musterman
+        currentAddress: max.mustermann@cosmicit.de
+        previousAddress: male
+        createdDate: "2000-10-10"
+        modifiedDate: "2000-10-10"
+    registrationCreateRequest:
       type: object
       properties:
-        street:
+        registrationDate:
           type: string
-        houseNumber:
+        lastRegistrationDate:
           type: string
-        zip:
+        createdBy:
           type: string
-        city:
+        modifiedBy:
           type: string
-        state:
+        currentAddress:
           type: string
-        country:
+        previousAddress:
           type: string
-        countryCode:
+        createdDate:
+          type: string
+        modifiedDate:
           type: string
       example:
-        street: maxmillian str
-        houseNumber: 54
-        zip: 81541
-        city: "Munich"
-        state: bayern
-        country: "DE"
-        countryCode: "DE"
-    addressUpdateRequest:
+        registrationDate: "2000-10-10"
+        lastRegistrationDate: "2000-1-12"
+        createdBy: Max
+        modifiedBy: Musterman
+        currentAddress: max.mustermann@cosmicit.de
+        previousAddress: male
+        createdDate: "2000-10-10"
+        modifiedDate: "2000-10-10"
+    registrationUpdateRequest:
       type: object
       properties:
-        street:
+        registrationDate:
           type: string
-        houseNumber:
+        lastRegistrationDate:
           type: string
-        zip:
+        createdBy:
           type: string
-        city:
+        modifiedBy:
           type: string
-        state:
+        currentAddress:
           type: string
-        country:
+        previousAddress:
           type: string
-        countryCode:
+        createdDate:
+          type: string
+        modifiedDate:
           type: string
       example:
-        street: maxmillian str
-        houseNumber: 54
-        zip: 81541
-        city: "Munich"
-        state: bayern
-        country: "DEUTSCHLAND"
-        countryCode: "DE"
+        registrationDate: "2000-10-10"
+        lastRegistrationDate: "2000-1-12"
+        createdBy: Max
+        modifiedBy: Musterman
+        currentAddress: max.mustermann@cosmicit.de
+        previousAddress: male
+        createdDate: "2000-10-10"
+        modifiedDate: "2000-10-10"
 

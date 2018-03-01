@@ -37,3 +37,7 @@ paths:
     $ref: 'v1/address.yml#/address'
   /address/{id}:
     $ref: 'v1/address.yml#/addressId'
+  /registration:
+    $ref: 'v1/registration.yml#/registration'
+  /registration/{id}:
+    $ref: 'v1/registration.yml#/registrationId'

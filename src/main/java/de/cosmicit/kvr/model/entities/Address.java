@@ -1,5 +1,11 @@
 package de.cosmicit.kvr.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import de.cosmicit.kvr.model.deserializers.ReferenceDeserializer;
+
 import javax.persistence.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
@@ -17,7 +23,7 @@ public class Address {
     private String street;
 
     @Column(name = "housenumber")
-    private String houseNumber;
+    private Integer houseNumber;
 
     @Column(name = "city")
     private String city;
@@ -35,6 +41,12 @@ public class Address {
     private String countryCode;
 
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_linkregistrationid")
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    @JsonIdentityReference(alwaysAsId = true)
+    @JsonDeserialize(using = ReferenceDeserializer.class)
+    private Registration registration;
 
     public Long getId() {
         return id;
@@ -52,11 +64,11 @@ public class Address {
         this.street = street;
     }
 
-    public String getHouseNumber() {
+    public Integer getHouseNumber() {
         return houseNumber;
     }
 
-    public void setHouseNumber(String houseNumber) {
+    public void setHouseNumber(Integer houseNumber) {
         this.houseNumber = houseNumber;
     }
 
@@ -100,4 +112,11 @@ public class Address {
         this.countryCode = countryCode;
     }
 
+    public Registration getRegistration() {
+        return registration;
+    }
+
+    public void setRegistration(Registration registration) {
+        this.registration = registration;
+    }
 }
